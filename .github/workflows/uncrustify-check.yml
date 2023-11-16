@@ -13,4 +13,4 @@ jobs:
     - name: Run style checks
       uses: coleaeason/actions-uncrustify@v1
       with:
-        configPath: 'uncrustify.cfg'
+        configPath: 'uncrustify_actions/uncrustify.cfg'
