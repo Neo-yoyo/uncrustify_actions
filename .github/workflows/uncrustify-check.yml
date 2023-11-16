@@ -4,13 +4,18 @@ on:
   push:
 
 jobs:
-  cpp_style_check:
+  uncrustify-check:
     runs-on: ubuntu-latest
-    name: Check C++ Style
+
     steps:
-    - name: Checkout this commit
+    - name: Checkout Repository
       uses: actions/checkout@v2
-    - name: Run style checks
-      uses: coleaeason/actions-uncrustify@v1
-      with:
-        configPath: 'uncrustify_actions/uncrustify.cfg'
+
+    - name: Set up Uncrustify
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y uncrustify
+
+    - name: Run Uncrustify Check
+      run: |
+        uncrustify --check -c uncrustify.cfg .
