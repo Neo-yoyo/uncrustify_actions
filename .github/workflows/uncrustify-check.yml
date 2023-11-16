@@ -2,8 +2,6 @@ name: Uncrustify Check
 
 on:
   push:
-    branches:
-      - '*'
 
 jobs:
   uncrustify-check:
