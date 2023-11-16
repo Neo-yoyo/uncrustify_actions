@@ -2,6 +2,8 @@ name: Uncrustify Check
 
 on:
   push:
+    branches:
+      - '*'
 
 jobs:
   uncrustify-check:
@@ -21,8 +23,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y uncrustify
 
+    - name: Make Script Executable
+      run: chmod +x .github/workflows/uncrustify-check.sh
+
     - name: Run Uncrustify Check
-      run: .github/workflows/uncrustify-check.sh
+      run: ./.github/workflows/uncrustify-check.sh
 
     - name: Display Files with Incorrect Formatting
       run: |
