@@ -10,10 +10,6 @@ jobs:
     steps:
     - name: Checkout this commit
       uses: actions/checkout@v2
-
-    - name: Fix ownership of workspace
-      run: sudo chown -R $USER:$USER /github/workspace
-
     - name: Run style checks
       uses: coleaeason/actions-uncrustify@v1
       with:
