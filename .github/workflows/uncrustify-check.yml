@@ -33,6 +33,9 @@ jobs:
           # Run Uncrustify check
           uncrustify -c uncrustify.cfg --check -f "$file" -l CPP > /dev/null 2>&1
 
+          # Print the exit code for debugging
+          echo "Exit code: $?"
+
           # If check fails, format the file
           if [ $? -ne 0 ]; then
             echo "File $file does not conform to code formatting rules. Formatting..."
@@ -46,6 +49,7 @@ jobs:
 
         # Find and check/format CPP, C, H, HPP files
         find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.h" -o -name "*.hpp" \) | while read -r file; do
+          echo "Checking and formatting $file"
           check_and_format "$file"
         done
 
