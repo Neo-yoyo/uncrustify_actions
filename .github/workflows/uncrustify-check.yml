@@ -42,6 +42,7 @@ jobs:
     #       echo "Файл(ы):$failed_files не соответствуют настройкам форматирования uncrustify."
     #       exit 1
     #     fi
+
     - name: Run Uncrustify Check
     run: |
         failed_files=""
