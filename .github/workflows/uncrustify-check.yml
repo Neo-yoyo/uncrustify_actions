@@ -1,0 +1,60 @@
+name: Uncrustify Check
+
+on:
+  push:
+    # branches:
+    #   - main
+
+jobs:
+  uncrustify-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Download Uncrustify Config from External Repository
+      run: |
+        curl -O -L https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
+        ls -al  # Optional: Display the downloaded files
+
+    - name: Install Uncrustify
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y uncrustify
+
+    - name: Run Uncrustify Check
+      run: |
+        # Define a function to check and format files
+        check_and_format() {
+          local file=$1
+          local tmpfile="${file}.tmp"
+
+          # Run Uncrustify check
+          uncrustify -c uncrustify.cfg --check -f "$file" -l CPP > /dev/null 2>&1
+
+          # If check fails, format the file
+          if [ $? -ne 0 ]; then
+            echo "File $file does not conform to code formatting rules. Formatting..."
+            uncrustify -c uncrustify.cfg -f "$file" -o "$tmpfile"
+            git diff --no-index "$file" "$tmpfile" || true
+            mv "$tmpfile" "$file"
+          else
+            echo "File $file passed style checks."
+          fi
+        }
+
+        # Find and check/format CPP, C, H, HPP files
+        find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.h" -o -name "*.hpp" \) | while read -r file; do
+          check_and_format "$file"
+        done
+
+    - name: Display Files with Incorrect Formatting
+      run: |
+        if [ -n "$(git diff --name-only)" ]; then
+          echo "Files with incorrect formatting:"
+          git diff --name-only
+          exit 1
+        else
+          echo "All files conform to the code formatting rules."
+        fi
