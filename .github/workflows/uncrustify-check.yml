@@ -13,8 +13,9 @@ jobs:
 
     - name: Set up Uncrustify
       run: |
+        sudo add-apt-repository -y ppa:uncrustify/ppa
         sudo apt-get update
-        sudo apt-get install -y uncrustify
+        sudo apt-get install -y uncrustify=0.77.1
 
     - name: Run Uncrustify Check
       run: |
