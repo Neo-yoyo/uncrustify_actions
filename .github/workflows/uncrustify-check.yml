@@ -27,20 +27,37 @@ jobs:
     # - name: Run Uncrustify Check
     #   run: |
     #     find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \;
+    #
+    # - name: Run Uncrustify Check
+    #   run: |
+    #     failed_files=""
+    #     while IFS= read -r -d $'\0' file; do
+    #       uncrustify --check -c uncrustify.cfg "$file"
+    #       if [ $? -ne 0 ]; then
+    #         failed_files="$failed_files $file"
+    #       fi
+    #     done < <(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -print0)
+    #
+    #     if [ -n "$failed_files" ]; then
+    #       echo "Файл(ы):$failed_files не соответствуют настройкам форматирования uncrustify."
+    #       exit 1
+    #     fi
 
     - name: Run Uncrustify Check
-      run: |
+    run: |
         failed_files=""
         while IFS= read -r -d $'\0' file; do
-          uncrustify --check -c uncrustify.cfg "$file"
-          if [ $? -ne 0 ]; then
+        uncrustify --check -c uncrustify.cfg "$file" >/dev/null 2>&1
+        if [ $? -ne 0 ]; then
             failed_files="$failed_files $file"
-          fi
+        fi
         done < <(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -print0)
 
         if [ -n "$failed_files" ]; then
-          echo "Файл(ы):$failed_files не соответствуют настройкам форматирования uncrustify."
-          exit 1
+        echo "Файл(ы):$failed_files не соответствуют настройкам форматирования uncrustify."
+        exit 1
+        else
+        echo "Файлы соответствуют настройкам форматирования uncrustify."
         fi
 
     # - name: Run Uncrustify Check
