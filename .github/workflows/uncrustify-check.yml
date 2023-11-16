@@ -22,34 +22,7 @@ jobs:
         sudo apt-get install -y uncrustify
 
     - name: Run Uncrustify Check
-      run: |
-        check_and_format() {
-          local file=$1
-          local tmpfile="${file}.tmp"
-
-          # Run Uncrustify check
-          uncrustify -c uncrustify.cfg --check -f "$file" -l CPP > /dev/null 2>&1
-          local exit_code=$?
-
-          # Print the exit code for debugging
-          echo "Exit code for $file: $exit_code"
-
-          # If check fails, format the file
-          if [ $exit_code -ne 0 ]; then
-            echo "File $file does not conform to code formatting rules. Formatting..."
-            uncrustify -c uncrustify.cfg -f "$file" -o "$tmpfile"
-            git diff --no-index "$file" "$tmpfile" || true
-            mv "$tmpfile" "$file"
-          else
-            echo "File $file passed style checks."
-          fi
-        }
-
-        # Find and check/format CPP, C, H, HPP files
-        find . -type f \( -name "*.cpp" -o -name "*.c" -o -name "*.h" -o -name "*.hpp" \) | while read -r file; do
-          echo "Checking and formatting $file"
-          check_and_format "$file"
-        done
+      run: .github/workflows/uncrustify-check.sh
 
     - name: Display Files with Incorrect Formatting
       run: |
