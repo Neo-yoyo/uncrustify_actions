@@ -4,39 +4,13 @@ on:
   push:
 
 jobs:
-  uncrustify-check:
+  cpp_style_check:
     runs-on: ubuntu-latest
-
+    name: Check C++ Style
     steps:
-    - name: Checkout repository
+    - name: Checkout this commit
       uses: actions/checkout@v2
-
-    - name: Download Uncrustify Config from External Repository
-      run: |
-        curl -O -L https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
-        ls -al  # Optional: Display the downloaded files
-
-    - name: Install Uncrustify
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y uncrustify
-
-    - name: Make Script Executable
-      run: chmod +x .github/workflows/uncrustify-check.sh
-
-    - name: Run Uncrustify Check
-      run: ./.github/workflows/uncrustify-check.sh
-
-    - name: Display Files with Incorrect Formatting
-      run: |
-        if [ -n "$(git diff --name-only)" ]; then
-          echo "Files with incorrect formatting:"
-          git diff --name-only
-          for file in $(git diff --name-only); do
-            echo "Changes in $file:"
-            git diff "$file"
-          done
-          exit 1
-        else
-          echo "All files conform to the code formatting rules."
-        fi
+    - name: Run style checks
+      uses: coleaeason/actions-uncrustify@v1
+      with:
+        configPath: 'uncrustify.cfg'
