@@ -1,7 +1,7 @@
 name: Uncrustify Check
 
 on:
-  push:
+  push
 
 jobs:
   uncrustify-check:
@@ -18,4 +18,4 @@ jobs:
 
     - name: Run Uncrustify Check
       run: |
-        uncrustify --check -c uncrustify.cfg .
+        find . -name "*.cpp" -o -name "*.h" -exec uncrustify --check -c uncrustify.cfg {} \;
