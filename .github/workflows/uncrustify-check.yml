@@ -18,4 +18,4 @@ jobs:
 
     - name: Run Uncrustify Check
       run: |
-        find . -name "*.cpp" -o -name "*.h" -exec uncrustify --check -c uncrustify.cfg {} \;
+        find . -type f \( -name "*.cpp" -o -name "*.h" \) -exec uncrustify --check -c uncrustify.cfg {} \;
