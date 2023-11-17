@@ -26,11 +26,13 @@ jobs:
 
     - name: Run Uncrustify Check
       run: |
-        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; | grep -E "FAIL")
+        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; | grep -E "FAIL" || true)
         if [ -n "$result" ]; then
           echo "Uncrustify check failed for the following files:"
           echo "$result"
           exit 1
+        else
+          echo "Uncrustify check passed for all files."
         fi
 
     # - name: Run Uncrustify Check
