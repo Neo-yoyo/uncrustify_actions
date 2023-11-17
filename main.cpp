@@ -42,7 +42,7 @@ void MustFailToLoad(const std::string& s) {
     }
 }
 
-template <typename Fn>
+template < typename Fn >
 void MustThrowLogicError(Fn fn) {
     try {
         fn();
@@ -132,7 +132,8 @@ void TestStrings() {
 
     assert(LoadJSON(Print(str_node)).GetRoot() == str_node);
     const std::string escape_chars
-        = R"("\r\n\t\"\\")"s;  // При чтении строкового литерала последовательности \r,\n,\t,\\,\"
+        = R"("\r\n\t\"\\")"s;  // При чтении строкового литерала последовательности
+                               // \r,\n,\t,\\,\"
     // преобразовываться в соответствующие символы.
     // При выводе эти символы должны экранироваться, кроме \t.
     assert(Print(LoadJSON(escape_chars).GetRoot()) == "\"\\r\\n\t\\\"\\\\\""s);
@@ -169,8 +170,9 @@ void TestArray() {
     assert(LoadJSON(Print(arr_node)).GetRoot() == arr_node);
     assert(LoadJSON(R"(  [ 1  ,  1.23,  "Hello"   ]   )"s).GetRoot() == arr_node);
     // Пробелы, табуляции и символы перевода строки между токенами JSON файла игнорируются
-    assert(LoadJSON("[ 1 \r \n ,  \r\n\t 1.23, \n \n  \t\t  \"Hello\" \t \n  ] \n  "s).GetRoot()
-           == arr_node);
+    assert(
+        LoadJSON("[ 1 \r \n ,  \r\n\t 1.23, \n \n  \t\t  \"Hello\" \t \n  ] \n  "s).GetRoot()
+        == arr_node);
 }
 
 void TestMap() {
@@ -187,7 +189,7 @@ void TestMap() {
     assert(
         LoadJSON(
             "\t\r\n\n\r { \t\r\n\n\r \"key1\" \t\r\n\n\r: \t\r\n\n\r \"value1\" \t\r\n\n\r , \t\r\n\n\r \"key2\" \t\r\n\n\r : \t\r\n\n\r 42 \t\r\n\n\r } \t\r\n\n\r"s)
-            .GetRoot()
+        .GetRoot()
         == dict_node);
 }
 
@@ -205,26 +207,32 @@ void TestErrorHandling() {
     MustFailToLoad("nul"s);
 
     Node dbl_node{3.5};
-    MustThrowLogicError([&dbl_node] {
-        dbl_node.AsInt();
-    });
-    MustThrowLogicError([&dbl_node] {
-        dbl_node.AsString();
-    });
-    MustThrowLogicError([&dbl_node] {
-        dbl_node.AsArray();
-    });
+    MustThrowLogicError(
+        [&dbl_node] {
+            dbl_node.AsInt();
+        });
+    MustThrowLogicError(
+        [&dbl_node] {
+            dbl_node.AsString();
+        });
+    MustThrowLogicError(
+        [&dbl_node] {
+            dbl_node.AsArray();
+        });
 
     Node array_node{Array{}};
-    MustThrowLogicError([&array_node] {
-        array_node.AsMap();
-    });
-    MustThrowLogicError([&array_node] {
-        array_node.AsDouble();
-    });
-    MustThrowLogicError([&array_node] {
-        array_node.AsBool();
-    });
+    MustThrowLogicError(
+        [&array_node] {
+            array_node.AsMap();
+        });
+    MustThrowLogicError(
+        [&array_node] {
+            array_node.AsDouble();
+        });
+    MustThrowLogicError(
+        [&array_node] {
+            array_node.AsBool();
+        });
 }
 
 void Benchmark() {
@@ -232,23 +240,25 @@ void Benchmark() {
     Array arr;
     arr.reserve(1'000);
     for (int i = 0; i < 1'000; ++i) {
-        arr.emplace_back(Dict{
-            {"int"s, 42},
-            {"double"s, 42.1},
-            {"null"s, nullptr},
-            {"string"s, "hello"s},
-            {"array"s, Array{1, 2, 3}},
-            {"bool"s, true},
-            {"map"s, Dict{{"key"s, "value"s}}},
-        });
+        arr.emplace_back(
+            Dict{
+                {"int"s, 42},
+                {"double"s, 42.1},
+                {"null"s, nullptr},
+                {"string"s, "hello"s},
+                {"array"s, Array{1, 2, 3}},
+                {"bool"s, true},
+                {"map"s, Dict{{"key"s, "value"s}}},
+            });
     }
     std::stringstream strm;
     json::Print(Document{arr}, strm);
     const auto doc = json::Load(strm);
     assert(doc.GetRoot() == arr);
     const auto duration = std::chrono::steady_clock::now() - start;
-    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << "ms"sv
-              << std::endl;
+    std::cout << std::chrono::duration_cast< std::chrono::milliseconds >(duration).count() <<
+        "ms"sv
+        << std::endl;
 }
 
 
