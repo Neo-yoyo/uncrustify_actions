@@ -34,10 +34,11 @@ jobs:
       run: |
         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
         if echo "$result" | grep -q "FAIL" ; then
-        # if [ $grep_exit_code -eq 0 ]; then
+          echo "Uncrustify check failed for the following files:"
           echo "$result" | grep "FAIL"
           exit 1
         else
+          echo "Uncrustify check passed for all files."
           exit 0
         fi
 
