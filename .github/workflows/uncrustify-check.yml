@@ -32,7 +32,7 @@ jobs:
 
     - name: Run Uncrustify Check
       run: |
-        curl -O -L https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
+        curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
         if echo "$result" | grep -q "FAIL" ; then
           echo "Uncrustify check failed for the following files:"
