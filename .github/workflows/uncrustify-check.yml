@@ -28,7 +28,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: uncrustify-uncrustify-0.77.1/build
-        key: uncrustify-build-${{ runner.os }}-v1
+      key: uncrustify-build-${{ runner.os }}-v1
 
     - name: Run Uncrustify Check
       run: |
