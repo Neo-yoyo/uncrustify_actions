@@ -12,8 +12,8 @@ namespace json {
 
 class Node;
 // Сохраните объявления Dict и Array без изменения
-using Dict = std::map< std::string, Node >;
-using Array = std::vector< Node >;
+using Dict = std::map<std::string, Node>;
+using Array = std::vector<Node>;
 
 // Эта ошибка должна выбрасываться при ошибках парсинга JSON
 class ParsingError : public std::runtime_error {
@@ -23,8 +23,8 @@ public:
 
 class Node {
 public:
-    /* Реализуйте Node, используя std::variant */
-    using Value = std::variant< std::nullptr_t, std::string, int, double, bool, Array, Dict >;
+   /* Реализуйте Node, используя std::variant */
+    using Value = std::variant<std::nullptr_t, std::string, int, double, bool, Array, Dict>;
 
     Node() = default;
     Node(std::nullptr_t);
@@ -62,8 +62,8 @@ public:
         return value_;
     }
 
-    bool operator== (const Node& rhs) const;
-    bool operator!= (const Node& rhs) const;
+    bool operator==(const Node& rhs) const;
+    bool operator!=(const Node& rhs) const;
 
 
 private:
@@ -82,8 +82,8 @@ public:
 
     const Node& GetRoot() const;
 
-    bool operator== (const Document& rhs) const;
-    bool operator!= (const Document& rhs) const;
+    bool operator==(const Document& rhs) const;
+    bool operator!=(const Document& rhs) const;
 
 private:
     Node root_;
@@ -114,13 +114,13 @@ struct PrintContext {
 
 struct PrintValueVisitor {
     std::ostream& out;
-    void operator() (std::nullptr_t);
-    void operator() (std::string value);
-    void operator() (int value);
-    void operator() (double value);
-    void operator() (bool value);
-    void operator() (Array array);
-    void operator() (Dict dict);
+    void operator()(std::nullptr_t);
+    void operator()(std::string value);
+    void operator()(int value);
+    void operator()(double value);
+    void operator()(bool value);
+    void operator()(Array array);
+    void operator()(Dict dict);
 };
 
 }  // namespace json
