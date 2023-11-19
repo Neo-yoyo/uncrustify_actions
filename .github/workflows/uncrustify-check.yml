@@ -13,7 +13,7 @@ jobs:
 
     - name: Set up Uncrustify
       run: |
-        sudo apt-get update
+        # sudo apt-get update
         sudo apt-get install -y wget
         wget https://github.com/uncrustify/uncrustify/archive/uncrustify-0.77.1.tar.gz
         tar -xzvf uncrustify-0.77.1.tar.gz
@@ -45,6 +45,10 @@ jobs:
           echo "Uncrustify check passed for all files."
           exit 0
         fi
+
+    - name: Remove Uncrustify Config
+      run: |
+        rm $GITHUB_WORKSPACE/uncrustify.cfg
 
 
     # grep -q "FAIL" $result && exit 1 || exit 0
