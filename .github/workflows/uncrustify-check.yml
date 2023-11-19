@@ -30,10 +30,13 @@ jobs:
     #     path: uncrustify-uncrustify-0.77.1/build
     #     key: uncrustify-build-${{ runner.os }}-v1
 
-    - name: Run Uncrustify Check
+    - name: Download Uncrustify Config
       run: |
         curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
-        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
+
+    - name: Run Uncrustify Check
+      run: |
+        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c $GITHUB_WORKSPACE/uncrustify.cfg {} \; 2>&1)
         if echo "$result" | grep -q "FAIL" ; then
           echo "Uncrustify check failed for the following files:"
           echo "$result" | grep "FAIL"
