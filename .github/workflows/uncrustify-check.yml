@@ -24,59 +24,39 @@ jobs:
         make
         sudo make install
 
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: uncrustify-uncrustify-0.77.1/build
+        key: uncrustify-build-${{ runner.os }}-v1
+
     - name: Run Uncrustify Check
       run: |
-        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \;)
-        if echo "$result" | grep -q "FAIL"; then
+        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
+        if echo "$result" | grep -q "FAIL" ; then
           echo "Uncrustify check failed for the following files:"
           echo "$result" | grep "FAIL"
           exit 1
         else
-         echo "Uncrustify check passed for all files."
+          echo "Uncrustify check passed for all files."
+          exit 0
         fi
 
-    # - name: Run Uncrustify Check
-    #   run: |
-    #     result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; | grep -E "FAIL")
-    #     if [ -n "$result" ]; then
-    #       echo "Uncrustify check failed for the following files:"
-    #       echo "$result"
-    #       exit 1
-    #     else
-    #       echo "Uncrustify check passed for all files."
-    #     fi
 
-    # - name: Run Uncrustify Check
-    #   run: |
-    #     find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \;
+    # grep -q "FAIL" $result && exit 1 || exit 0
 
-    # - name: Run Uncrustify Check
-    #   run: |
-    #     failed_files=""
-    #     while IFS= read -r -d $'\0' file; do
-    #       uncrustify --check -c uncrustify.cfg "$file"
-    #       if [ $? -ne 0 ]; then
-    #         failed_files="$failed_files $file"
-    #       fi
-    #     done < <(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -print0)
-    #
-    #     if [ -n "$failed_files" ]; then
-    #       echo "Файл(ы):$failed_files не соответствуют настройкам форматирования uncrustify."
-    #       exit 1
-    #     fi
+    # if [ $? -eq 0 ]; then
+    #   echo "Uncrustify check failed for the following files:"
+    #   echo "$result" | grep "FAIL"
+    #   exit 1
+    # else
+    #   echo "Uncrustify check passed for all files."
+    #   exit 0
+    # fi
+
+    # find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" | xargs -I {} uncrustify --check -c uncrustify.cfg -l cpp {} | tee result.txt
+    # grep -q "FAIL" result.txt && exit 1 || exit 0
 
 
-    # - name: Run Uncrustify Check
-    # run: |
-    #     failed_files=""
-    #     while IFS= read -r -d $'\0' file; do
-    #         uncrustify --check -c uncrustify.cfg "$file" >/dev/null 2>&1
-    #         if [ $? -ne 0 ]; then
-    #             failed_files="$failed_files $file"
-    #         fi
-    #     done < <(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -print0)
-    #
-    #     if [ -n "$failed_files" ]; then
-    #         echo "Файл(ы):$failed_files не соответствуют настройкам форматирования uncrustify."
-    #         exit 1
-    #     fi
+
+
