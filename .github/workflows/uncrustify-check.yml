@@ -24,12 +24,6 @@ jobs:
         make
         sudo make install
 
-    # - name: Cache dependencies
-    #   uses: actions/cache@v2
-    #   with:
-    #     path: uncrustify-uncrustify-0.77.1/build
-    #     key: uncrustify-build-${{ runner.os }}-v1
-
     - name: Download Uncrustify Config
       run: |
         curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
