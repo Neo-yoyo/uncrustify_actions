@@ -32,7 +32,7 @@ jobs:
 
     - name: Run Uncrustify Check
       run: |
-        find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \ | tee result.txt
+        find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" | xargs -I {} uncrustify --check -c uncrustify.cfg -l cpp {} | tee result.txt
         grep -q "FAIL" result.txt && exit 1 || exit 0
 
 
