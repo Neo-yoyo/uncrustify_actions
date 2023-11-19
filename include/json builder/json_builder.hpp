@@ -139,35 +139,35 @@
 #include "json.h"
 #include <optional>
 
-namespace json {
-class Builder {
-public:
-    /// При создании объекта класса инициализируем стек указателей на Node
-    /// и добавляем корневой узел в стек. Это готовый для построения JSON-объект.
-    Builder() {
-        Node* ptr = &root_;
-        nodes_stack_.emplace_back(ptr);
-    }
-    Builder& Key(std::string);
-    Builder& Value(Node::Value);
-    Builder& StartDict();
-    Builder& StartArray();
-    Builder& EndDict();
-    Builder& EndArray();
-    json::Node Build();
+namespace json{
+    class Builder{
+    public:
+        /// При создании объекта класса инициализируем стек указателей на Node
+        /// и добавляем корневой узел в стек. Это готовый для построения JSON-объект.
+        Builder(){
+            Node* ptr = &root_;
+            nodes_stack_.emplace_back(ptr);
+        }
+        Builder& Key(std::string);
+        Builder& Value(Node::Value);
+        Builder& StartDict();
+        Builder& StartArray();
+        Builder& EndDict();
+        Builder& EndArray();
+        json::Node Build();
 
-private:
-    /// сам конструируемый объект
-    Node root_{nullptr};
-    /// стек указателей на те вершины JSON, которые ещё не построены
-    std::vector< Node* > nodes_stack_;
+    private:
+        /// сам конструируемый объект
+        Node root_{nullptr};
+        /// стек указателей на те вершины JSON, которые ещё не построены
+        std::vector<Node*> nodes_stack_;
 
-    Node ReadValue(Node::Value& value);
-    Node* Insert(Node node);
-    /// Текущий ключ для определения пары ключ-значение в словаре
+        Node ReadValue(Node::Value& value);
+        Node* Insert(Node node);
+        /// Текущий ключ для определения пары ключ-значение в словаре
 //    std::string current_key_;
 //        std::optional<std::string> current_key_ {std::nullopt};
 
-};
+    };
 
 } // namespace json
