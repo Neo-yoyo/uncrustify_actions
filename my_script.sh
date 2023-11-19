@@ -2,7 +2,6 @@
 
 result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
 # echo "$result"
-
 echo "$result" | grep -q "FAIL"
 if [ $? -eq 0 ]; then
   echo "Uncrustify check failed for the following files:"
