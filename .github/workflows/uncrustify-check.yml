@@ -35,7 +35,7 @@ jobs:
         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
         echo "$result" | grep -q "FAIL"
         if [ $? -eq 0 ]; then
-          echo "$result"
+          echo "$result" | grep "FAIL"
           exit 1
         else
           exit 0
