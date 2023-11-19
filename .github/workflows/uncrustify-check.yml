@@ -24,13 +24,13 @@ jobs:
         make
         sudo make install
 
-    - name: Download Uncrustify Config
-      run: |
-        curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
+    # - name: Download Uncrustify Config
+    #   run: |
+    #     curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
 
     - name: Run Uncrustify Check
       run: |
-        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c $GITHUB_WORKSPACE/uncrustify.cfg {} \; 2>&1)
+        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
         if echo "$result" | grep -q "FAIL" ; then
           echo "Uncrustify check failed for the following files:"
           echo "$result" | grep "FAIL"
@@ -40,9 +40,9 @@ jobs:
           exit 0
         fi
 
-    - name: Remove Uncrustify Config
-      run: |
-        rm $GITHUB_WORKSPACE/uncrustify.cfg
+    # - name: Remove Uncrustify Config
+    #   run: |
+    #     rm $GITHUB_WORKSPACE/uncrustify.cfg
 
 
     # grep -q "FAIL" $result && exit 1 || exit 0
