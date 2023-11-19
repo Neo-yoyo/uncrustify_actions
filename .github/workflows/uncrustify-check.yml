@@ -32,17 +32,22 @@ jobs:
 
     - name: Run Uncrustify Check
       run: |
-        find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" | xargs -I {} uncrustify --check -c uncrustify.cfg -l cpp {} | tee result.txt
-        grep -q "FAIL" result.txt && exit 1 || exit 0
+        result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
+        echo "$result" | grep -q "FAIL"
+        grep -q "FAIL" "$result" && exit 1 || exit 0
+
+        # if [ $? -eq 0 ]; then
+        #   echo "Uncrustify check failed for the following files:"
+        #   echo "$result" | grep "FAIL"
+        #   exit 1
+        # else
+        #   echo "Uncrustify check passed for all files."
+        #   exit 0
+        # fi
+
+    # find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" | xargs -I {} uncrustify --check -c uncrustify.cfg -l cpp {} | tee result.txt
+    # grep -q "FAIL" result.txt && exit 1 || exit 0
 
 
-    # result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
-    # echo "$result" | grep -q "FAIL"
-    # if [ $? -eq 0 ]; then
-    #   echo "Uncrustify check failed for the following files:"
-    #   echo "$result" | grep "FAIL"
-    #   exit 1
-    # else
-    #   echo "Uncrustify check passed for all files."
-    #   exit 0
-    # fi
+
+
