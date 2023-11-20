@@ -32,9 +32,9 @@ jobs:
     # Так как файл с конфигурационными настройками uncrustify.cfg не хранится
     # в каждом репозитории, нужно подтянуть его отсюда:
     # https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
-    # - name: Download Uncrustify Config
-    #   run: |
-    #     curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
+    - name: Download Uncrustify Config
+      run: |
+        curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
 
     # Проверка форматирования:
     # - если все файлы проекта отформатированы, проверка будет пройдена успешно;
