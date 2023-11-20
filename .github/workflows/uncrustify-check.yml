@@ -49,7 +49,7 @@ jobs:
       run: |
         # curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
         # curl -o uncrustify.cfg https://gist.githubusercontent.com/Neo-yoyo/cbd14dd9893d0142d5339e7e778e2a1c/raw
-        curl -o uncrustify.cfg -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" https://raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
+        curl -o uncrustify.cfg -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
         if echo "$result" | grep -q "FAIL" ; then
           echo "Uncrustify check failed for the following files:"
