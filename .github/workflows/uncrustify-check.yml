@@ -10,7 +10,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # последняя версия Uncrustify для ubuntu - 0.72; для arch - 0.77.1
     # чтобы настройки на машине разработчика совпадали с настройками при проверке
@@ -34,7 +34,7 @@ jobs:
     # https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
     - name: Download Uncrustify Config
       run: |
-        curl -o -l uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
+        curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
 
     # Проверка форматирования:
     # - если все файлы проекта отформатированы, проверка будет пройдена успешно;
