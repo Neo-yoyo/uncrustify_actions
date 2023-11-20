@@ -34,7 +34,7 @@ jobs:
     # https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
     - name: Download Uncrustify Config
       run: |
-        curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
+        curl -o -l uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
 
     # Проверка форматирования:
     # - если все файлы проекта отформатированы, проверка будет пройдена успешно;
