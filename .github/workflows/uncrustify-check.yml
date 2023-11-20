@@ -1,5 +1,6 @@
 name: Uncrustify Check
 
+# на push проще тестировать
 on:
   push
 
@@ -11,6 +12,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
+    # последняя версия Uncrustify для ubuntu - 0.72; для arch - 0.77.1
+    # чтобы настройки на машине разработчика совпадали с настройками при проверке
+    # явно подтягиваем версию uncrustify-0.77.1
+    # TODO: этот шаг занимает много времени, возможно можно кэшировать?
     - name: Set up Uncrustify
       run: |
         # sudo apt-get update
@@ -24,10 +29,22 @@ jobs:
         make
         sudo make install
 
+    # Так как файл с конфигурационными настройками uncrustify.cfg не хранится
+    # в каждом репозитории, нужно подтянуть его отсюда:
+    # https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
     # - name: Download Uncrustify Config
     #   run: |
     #     curl -O -L https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
 
+    # Проверка форматирования:
+    # - если все файлы проекта отформатированы, проверка будет пройдена успешно;
+    # - если для каких-то файлов форматирование не применено - проверка провалится
+    # и будет выведен список файлов, не соотвествующих форматированию.
+    # TODO: файл с настройками должен подтягиваться из стороннего приватного репозитория,
+    # сейчас он лежит в корневой директории проекта.
+    # Пример вывода при неуспехе:
+    # Uncrustify check failed for the following files:
+    # FAIL: ./src/main.cpp (File size changed from 1824 to 1664)
     - name: Run Uncrustify Check
       run: |
         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
@@ -40,24 +57,12 @@ jobs:
           exit 0
         fi
 
+    # Здесь была попытка удалить файл с конфигурацинными настройками,
+    # т.к. кажется он сам не удаляется, а эти файлы копятся в склонированном репозитории
     # - name: Remove Uncrustify Config
     #   run: |
     #     rm $GITHUB_WORKSPACE/uncrustify.cfg
 
-
-    # grep -q "FAIL" $result && exit 1 || exit 0
-
-    # if [ $? -eq 0 ]; then
-    #   echo "Uncrustify check failed for the following files:"
-    #   echo "$result" | grep "FAIL"
-    #   exit 1
-    # else
-    #   echo "Uncrustify check passed for all files."
-    #   exit 0
-    # fi
-
-    # find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" | xargs -I {} uncrustify --check -c uncrustify.cfg -l cpp {} | tee result.txt
-    # grep -q "FAIL" result.txt && exit 1 || exit 0
 
 
 
