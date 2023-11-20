@@ -32,9 +32,9 @@ jobs:
     # Так как файл с конфигурационными настройками uncrustify.cfg не хранится
     # в каждом репозитории, нужно подтянуть его отсюда:
     # https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
-    - name: Download Uncrustify Config
-      run: |
-        curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
+    # - name: Download Uncrustify Config
+    #   run: |
+    #     curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
 
     # Проверка форматирования:
     # - если все файлы проекта отформатированы, проверка будет пройдена успешно;
@@ -47,6 +47,7 @@ jobs:
     # FAIL: ./src/main.cpp (File size changed from 1824 to 1664)
     - name: Run Uncrustify Check
       run: |
+        curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
         if echo "$result" | grep -q "FAIL" ; then
           echo "Uncrustify check failed for the following files:"
