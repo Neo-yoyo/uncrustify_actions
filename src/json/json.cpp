@@ -13,13 +13,13 @@ Node LoadString(std::istream& input);
 std::string LoadLiteral(std::istream& input) {
     std::string s;
     while (std::isalpha(input.peek())) {
-        s.push_back(static_cast<char>(input.get()));
+        s.push_back(static_cast< char >(input.get()));
     }
     return s;
 }
 
 Node LoadArray(std::istream& input) {
-    std::vector<Node> result;
+    std::vector< Node > result;
 
     for (char c; input >> c && c != ']';) {
         if (c != ',') {
@@ -58,8 +58,8 @@ Node LoadDict(std::istream& input) {
 }
 
 Node LoadString(std::istream& input) {
-    auto it = std::istreambuf_iterator<char>(input);
-    auto end = std::istreambuf_iterator<char>();
+    auto it = std::istreambuf_iterator< char >(input);
+    auto end = std::istreambuf_iterator< char >();
     std::string s;
     while (true) {
         if (it == end) {
@@ -129,7 +129,7 @@ Node LoadNumber(std::istream& input) {
 
     // Считывает в parsed_num очередной символ из input
     auto read_char = [&parsed_num, &input] {
-        parsed_num += static_cast<char>(input.get());
+        parsed_num += static_cast< char >(input.get());
         if (!input) {
             throw ParsingError("Failed to read number from stream"s);
         }
@@ -240,7 +240,7 @@ struct PrintContext {
 
 void PrintNode(const Node& value, const PrintContext& ctx);
 
-template <typename Value>
+template < typename Value >
 void PrintValue(const Value& value, const PrintContext& ctx) {
     ctx.out << value;
 }
@@ -270,12 +270,12 @@ void PrintString(const std::string& value, std::ostream& out) {
 }
 
 template <>
-void PrintValue<std::string>(const std::string& value, const PrintContext& ctx) {
+void PrintValue< std::string >(const std::string& value, const PrintContext& ctx) {
     PrintString(value, ctx.out);
 }
 
 template <>
-void PrintValue<std::nullptr_t>(const std::nullptr_t&, const PrintContext& ctx) {
+void PrintValue< std::nullptr_t >(const std::nullptr_t&, const PrintContext& ctx) {
     ctx.out << "null"sv;
 }
 
@@ -284,12 +284,12 @@ void PrintValue<std::nullptr_t>(const std::nullptr_t&, const PrintContext& ctx) 
 // В качестве альтернативы можно использовать перегрузку:
 // void PrintValue(bool value, const PrintContext& ctx);
 template <>
-void PrintValue<bool>(const bool& value, const PrintContext& ctx) {
+void PrintValue< bool >(const bool& value, const PrintContext& ctx) {
     ctx.out << (value ? "true"sv : "false"sv);
 }
 
 template <>
-void PrintValue<Array>(const Array& nodes, const PrintContext& ctx) {
+void PrintValue< Array >(const Array& nodes, const PrintContext& ctx) {
     std::ostream& out = ctx.out;
     out << "[\n"sv;
     bool first = true;
@@ -309,7 +309,7 @@ void PrintValue<Array>(const Array& nodes, const PrintContext& ctx) {
 }
 
 template <>
-void PrintValue<Dict>(const Dict& nodes, const PrintContext& ctx) {
+void PrintValue< Dict >(const Dict& nodes, const PrintContext& ctx) {
     std::ostream& out = ctx.out;
     out << "{\n"sv;
     bool first = true;
@@ -332,7 +332,7 @@ void PrintValue<Dict>(const Dict& nodes, const PrintContext& ctx) {
 
 void PrintNode(const Node& node, const PrintContext& ctx) {
     std::visit(
-        [&ctx](const auto& value) {
+        [&ctx] (const auto& value) {
             PrintValue(value, ctx);
         },
         node.GetValue());
