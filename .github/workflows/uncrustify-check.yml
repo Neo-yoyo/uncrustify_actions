@@ -21,18 +21,27 @@ jobs:
       # Клонирование репозитория
       - uses: actions/checkout@v3
 
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            uncrustify-uncrustify-0.77.1/uncrustify-0.77.1
+          key: uncrustify-source-${{ runner.os }}-${{ hashFiles('uncrustify-uncrustify-0.77.1/uncrustify-0.77.1.tar.gz') }}
+          restore-keys: |
+            uncrustify-source-
+
     # последняя версия Uncrustify для ubuntu - 0.72; для arch - 0.77.1
     # чтобы настройки на машине разработчика совпадали с настройками при проверке
     # явно подтягиваем версию uncrustify-0.77.1
     # TODO: этот шаг занимает много времени, возможно можно кэшировать?
-      - name: Set up Uncrustify
+      - name: Set up & Build Uncrustify
         run: |
           sudo apt-get update
           sudo apt-get install -y wget
           wget https://github.com/uncrustify/uncrustify/archive/uncrustify-0.77.1.tar.gz
           tar -xzvf uncrustify-0.77.1.tar.gz
-          cd uncrustify-uncrustify-0.77.1
-          mkdir build
+          cd uncrustify-uncrustify-0.77.1/uncrustify-0.77.1
+          mkdir -p build
           cd build
           cmake ..
           make
