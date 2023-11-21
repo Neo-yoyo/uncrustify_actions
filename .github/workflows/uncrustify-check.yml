@@ -25,8 +25,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            uncrustify-uncrustify-0.77.1/uncrustify-0.77.1
-          key: uncrustify-source-${{ runner.os }}-${{ hashFiles('uncrustify-uncrustify-0.77.1/uncrustify-0.77.1.tar.gz') }}
+            uncrustify-uncrustify-0.77.1
+          key: uncrustify-source-${{ runner.os }}-${{ hashFiles('uncrustify-0.77.1.tar.gz') }}
           restore-keys: |
             uncrustify-source-
 
@@ -40,8 +40,13 @@ jobs:
           sudo apt-get install -y wget
           wget https://github.com/uncrustify/uncrustify/archive/uncrustify-0.77.1.tar.gz
           tar -xzvf uncrustify-0.77.1.tar.gz
-          cd uncrustify-uncrustify-0.77.1/uncrustify-0.77.1
-          mkdir -p build
+          cd uncrustify-uncrustify-0.77.1
+
+          # mkdir build
+          if [ ! -d "build" ]; then
+            mkdir build
+          fi
+
           cd build
           cmake ..
           make
