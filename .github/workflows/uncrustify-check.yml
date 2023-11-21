@@ -8,9 +8,18 @@ jobs:
   uncrustify-check:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+    # steps:
+    #   # Авторизация в репозитории с использованием SSH
+    #   # данный шаг осуществляет авторизацию в репозитории, так как он приватный - это обязательно
+    #   # uses webfactory/ssh-agent@v0.8.0 - библиотека упрощающая использование SSH
+    #   - uses: webfactory/ssh-agent@v0.8.0
+    #     with:
+    #       # Используется приватный ключ из секретов организации.
+    #       # В любом репозитории QCoreTech можно его использовать
+    #       ssh-private-key: ${{ secrets.MQBOT }}
+
+      # Клонирование репозитория
+      - uses: actions/checkout@v3
 
     # последняя версия Uncrustify для ubuntu - 0.72; для arch - 0.77.1
     # чтобы настройки на машине разработчика совпадали с настройками при проверке
@@ -29,18 +38,21 @@ jobs:
         make
         sudo make install
 
+    # - name: Download Uncrustify Config
+    #   run: |
+    #     git clone git@github.com:QCoreTech/format.cmake.git
+    #     cp format.cmake/uncrustify.cfg .
+
     # Так как файл с конфигурационными настройками uncrustify.cfg не хранится
     # в каждом репозитории, нужно подтянуть его отсюда:
     # https://github.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
-    - name: Download Uncrustify Config
-      run: |
-        # curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
-        # curl -o uncrustify.cfg https://gist.githubusercontent.com/Neo-yoyo/cbd14dd9893d0142d5339e7e778e2a1c/raw
-        # curl -o uncrustify.cfg -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
-        # curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
-        # curl -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" -o uncrustify.cfg -L https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
-        git clone git@github.com:QCoreTech/format.cmake.git
-        cp format.cmake/uncrustify.cfg .
+    # - name: Download Uncrustify Config
+    #   run: |
+    #     # curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
+    #     # curl -o uncrustify.cfg https://gist.githubusercontent.com/Neo-yoyo/cbd14dd9893d0142d5339e7e778e2a1c/raw
+    #     # curl -o uncrustify.cfg -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
+    #     # curl -o uncrustify.cfg https://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@raw.githubusercontent.com/QCoreTech/format.cmake/blob/master/uncrustify.cfg
+    #     # curl -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" -o uncrustify.cfg -L https://raw.githubusercontent.com/QCoreTech/format.cmake/master/uncrustify.cfg
 
     # Проверка форматирования:
     # - если все файлы проекта отформатированы, проверка будет пройдена успешно;
@@ -62,12 +74,6 @@ jobs:
           echo "Uncrustify check passed for all files."
           exit 0
         fi
-
-    # Здесь была попытка удалить файл с конфигурацинными настройками,
-    # т.к. кажется он сам не удаляется, а эти файлы копятся в склонированном репозитории
-    # - name: Remove Uncrustify Config
-    #   run: |
-    #     rm $GITHUB_WORKSPACE/uncrustify.cfg
 
 
 
