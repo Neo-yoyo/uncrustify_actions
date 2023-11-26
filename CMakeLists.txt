@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+add_package(format GIT_REPOSITORY git@github.com:QCoreTech/format.cmake.git GIT_TAG master)
+add_package(xt-variant GIT_REPOSITORY git@github.com:QCoreTech/xt-variant.git GIT_TAG dev)
+
 add_executable(json
                 main.cpp
                 json.h

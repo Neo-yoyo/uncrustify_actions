@@ -2,74 +2,104 @@ name: Uncrustify Check
 
 # на push проще тестировать
 on:
-  push
+  # push
+  pull_request:
 
 jobs:
-  uncrustify-check:
-    runs-on: ubuntu-latest
+  check_git_tag:
+    runs-on: ubuntu-22.04
 
     steps:
-    #   # Авторизация в репозитории с использованием SSH
-    #   # данный шаг осуществляет авторизацию в репозитории, так как он приватный - это обязательно
-    #   # uses webfactory/ssh-agent@v0.8.0 - библиотека упрощающая использование SSH
-    #   - uses: webfactory/ssh-agent@v0.8.0
-    #     with:
-    #       # Используется приватный ключ из секретов организации.
-    #       # В любом репозитории QCoreTech можно его использовать
-    #       ssh-private-key: ${{ secrets.MQBOT }}
-
-      # Клонирование репозитория
-      - uses: actions/checkout@v3
-
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            uncrustify-uncrustify-0.77.1
-          key: uncrustify-source-${{ runner.os }}-${{ hashFiles('uncrustify-0.77.1.tar.gz') }}
-          restore-keys: |
-            uncrustify-source-
-
-    # последняя версия Uncrustify для ubuntu - 0.72; для arch - 0.77.1
-    # чтобы настройки на машине разработчика совпадали с настройками при проверке
-    # явно подтягиваем версию uncrustify-0.77.1
-    # TODO: этот шаг занимает много времени, возможно можно кэшировать?
-      - name: Set up & Build Uncrustify
+      - name: Check for GIT_TAG dev
+        id: check-git-tag
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://github.com/uncrustify/uncrustify/archive/uncrustify-0.77.1.tar.gz
-          tar -xzvf uncrustify-0.77.1.tar.gz
-          cd uncrustify-uncrustify-0.77.1
+          if grep -q "add_package(" CMakeLists.txt && grep -q "GIT_TAG dev" CMakeLists.txt; then
+            echo "::warning::Warning: Dependency GIT_TAG is set to 'dev' in CMakeLists.txt."
 
-          # mkdir build
-          if [ ! -d "build" ]; then
-            mkdir build
-          fi
+            # Create a comment on the Pull Request
+            pr_comment="Warning: Зависимость GIT_TAG установлена в 'dev' в CMakeLists.txt. Замените на 'mater'."
+            curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -d "{\"body\":\"$pr_comment\"}" "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
 
-          cd build
-          cmake ..
-          make
-          sudo make install
+            # комментарий к Pull Request
+            # curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -d "{\"body\":\"Warning: Dependency GIT_TAG is set to 'dev' in CMakeLists.txt.\"}" "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
 
-      - name: Run Uncrustify Check
-        run: |
-          result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
-          if echo "$result" | grep -q "FAIL" ; then
-            echo "Uncrustify check failed for the following files:"
-            echo "$result" | grep "FAIL"
-            exit 1
-          else
-            echo "Uncrustify check passed for all files."
+            # комментарий на уровне коммита
+            # curl -X POST -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -d "{\"body\":\"Warning: Dependency GIT_TAG is set to 'dev' in CMakeLists.txt. Please review and update if necessary.\"}" "https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments"
+
             exit 0
+          else
+            echo "No issue with GIT_TAG detected."
           fi
 
-  job2:
-    needs: uncrustify-check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Step 2
-        run: echo "This is step 2"
+  # uncrustify-check:
+  #   runs-on: ubuntu-latest
+  #
+  #   steps:
+  #   #   # Авторизация в репозитории с использованием SSH
+  #   #   # данный шаг осуществляет авторизацию в репозитории, так как он приватный - это обязательно
+  #   #   # uses webfactory/ssh-agent@v0.8.0 - библиотека упрощающая использование SSH
+  #   #   - uses: webfactory/ssh-agent@v0.8.0
+  #   #     with:
+  #   #       # Используется приватный ключ из секретов организации.
+  #   #       # В любом репозитории QCoreTech можно его использовать
+  #   #       ssh-private-key: ${{ secrets.MQBOT }}
+  #
+  #     # Клонирование репозитория
+  #     - uses: actions/checkout@v3
+  #
+  #     - name: Cache dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           uncrustify-uncrustify-0.77.1
+  #         key: uncrustify-source-${{ runner.os }}-${{ hashFiles('uncrustify-0.77.1.tar.gz') }}
+  #         restore-keys: |
+  #           uncrustify-source-
+  #
+  #   # последняя версия Uncrustify для ubuntu - 0.72; для arch - 0.77.1
+  #   # чтобы настройки на машине разработчика совпадали с настройками при проверке
+  #   # явно подтягиваем версию uncrustify-0.77.1
+  #   # TODO: этот шаг занимает много времени, возможно можно кэшировать?
+  #     - name: Set up & Build Uncrustify
+  #       run: |
+  #         sudo apt-get update
+  #         sudo apt-get install -y wget
+  #         wget https://github.com/uncrustify/uncrustify/archive/uncrustify-0.77.1.tar.gz
+  #         tar -xzvf uncrustify-0.77.1.tar.gz
+  #         cd uncrustify-uncrustify-0.77.1
+  #
+  #         # mkdir build
+  #         if [ ! -d "build" ]; then
+  #           mkdir build
+  #         fi
+  #
+  #         cd build
+  #         cmake ..
+  #         make
+  #         sudo make install
+  #
+  #     - name: Run Uncrustify Check
+  #       run: |
+  #         result=$(find . -type f \( -name "*.cpp" -o -name "*.hpp" \) -not -path "./uncrustify-uncrustify-0.77.1/*" -exec uncrustify --check -c uncrustify.cfg {} \; 2>&1)
+  #         if echo "$result" | grep -q "FAIL" ; then
+  #           echo "Uncrustify check failed for the following files:"
+  #           echo "$result" | grep "FAIL"
+  #           exit 1
+  #         else
+  #           echo "Uncrustify check passed for all files."
+  #           exit 0
+  #         fi
+  #
+  # job2:
+  #   needs: uncrustify-check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Step 2
+  #       run: echo "This is step 2"
+
+
+
+
 
 
     # - name: Download Uncrustify Config
